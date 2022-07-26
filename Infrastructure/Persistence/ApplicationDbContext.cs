@@ -24,6 +24,12 @@ namespace Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<HistoricalEvent>(entity =>
+            {
+                entity.Property(e => e.ID)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
+            });
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<HistoricalEvent>().HasQueryFilter(a => a.TenantId == TenantId);
         }
