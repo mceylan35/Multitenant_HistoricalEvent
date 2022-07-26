@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Multitenant.Api.Filter;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Multitenant.Api
 {
@@ -27,12 +30,14 @@ namespace Multitenant.Api
         {
             services.AddHttpContextAccessor();
             services.AddControllers();
+            services.AddLocalization();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenant.Api", Version = "v1" });
+                c.OperationFilter<MyHeaderFilter>();
             });
             services.AddTransient<ITenantService, TenantService>();
-            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IHistoricalEventService, HistoricalEventService>();
             services.Configure<TenantSettings>(config.GetSection(nameof(TenantSettings)));
             services.AddAndMigrateTenantDatabases(config);
         }
@@ -46,7 +51,15 @@ namespace Multitenant.Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Multitenant.Api v1"));
             }
-
+            var cultures = new List<CultureInfo> {
+            new CultureInfo("tr"),
+             new CultureInfo("it")
+};
+            app.UseRequestLocalization(options => {
+                options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("tr");
+                options.SupportedCultures = cultures;
+                options.SupportedUICultures = cultures;
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();
