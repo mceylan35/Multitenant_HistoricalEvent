@@ -9,7 +9,7 @@ namespace Core.Interfaces
 {
     public interface IHistoricalEventService
     {
-        Task<HistoricalEvent> CreateAsync(string name, string description, int rate);
+        Task<HistoricalEvent> CreateAsync(string dcZaman, string dckategori, string dcOlay);
 
         Task<HistoricalEvent> GetByIdAsync(int id);
 
