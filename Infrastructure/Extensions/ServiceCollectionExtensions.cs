@@ -14,7 +14,7 @@ namespace Infrastructure.Extensions
             var options = services.GetOptions<TenantSettings>(nameof(TenantSettings));
             var defaultConnectionString = options.Defaults?.ConnectionString;
             var defaultDbProvider = options.Defaults?.DBProvider;
-            if (defaultDbProvider.ToLower() == "mssql")
+            if (defaultDbProvider.ToLower() == "tr")
             {
                 services.AddDbContext<ApplicationDbContext>(m => m.UseSqlServer(e => e.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
             }
