@@ -20,12 +20,12 @@ namespace Infrastructure.Persistence
             TenantId = _tenantService.GetTenant()?.TID;
         }
 
-        public DbSet<Product> Products { get; set; }
+        public DbSet<HistoricalEvent> HistoricalEvents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Product>().HasQueryFilter(a => a.TenantId == TenantId);
+            modelBuilder.Entity<HistoricalEvent>().HasQueryFilter(a => a.TenantId == TenantId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,7 +34,11 @@ namespace Infrastructure.Persistence
             if (!string.IsNullOrEmpty(tenantConnectionString))
             {
                 var DBProvider = _tenantService.GetDatabaseProvider();
-                if (DBProvider.ToLower() == "mssql")
+                if (DBProvider.ToLower() == "tr")
+                {
+                    optionsBuilder.UseSqlServer(_tenantService.GetConnectionString());
+                }
+                else
                 {
                     optionsBuilder.UseSqlServer(_tenantService.GetConnectionString());
                 }
