@@ -27,7 +27,7 @@ namespace Multitenant.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(HistoricalEventRequest request)
         {
-            return Ok(await _service.CreateAsync(request.DcOlay, request.DcKategori, 1));
+            return Ok(await _service.CreateAsync(request.DcOlay, request.DcKategori, request.DcKategori));
         }
     }
     public class HistoricalEventRequest
