@@ -3,16 +3,21 @@ using Core.Options;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Multitenant.Api.Filter;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace Multitenant.Api
 {
@@ -31,6 +36,20 @@ namespace Multitenant.Api
             services.AddHttpContextAccessor();
             services.AddControllers();
             services.AddLocalization();
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Added for JWT token - Shashank
+            //   .AddJwtBearer(options =>
+            //   {
+            //       options.TokenValidationParameters = new TokenValidationParameters
+            //       {
+            //           ValidateIssuer = true,
+            //           ValidateAudience = true,
+            //           ValidateLifetime = true,
+            //           ValidateIssuerSigningKey = true,
+            //           //ValidIssuer = Configuration["Jwt:Issuer"],
+            //          // ValidAudience = Configuration["Jwt:Audience"],
+            //           ///IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+            //       };
+            //   });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenant.Api", Version = "v1" });
@@ -38,7 +57,9 @@ namespace Multitenant.Api
             });
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<IHistoricalEventService, HistoricalEventService>();
+            services.AddTransient<IUserService, UserService>();
             services.Configure<TenantSettings>(config.GetSection(nameof(TenantSettings)));
+          //  services.AddDbContext<ApplicationDbContext>();
             services.AddAndMigrateTenantDatabases(config);
         }
 
@@ -61,9 +82,10 @@ namespace Multitenant.Api
                 options.SupportedUICultures = cultures;
             });
             app.UseHttpsRedirection();
-
+            app.UseRequestLocalization(app.ApplicationServices.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
             app.UseRouting();
-
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

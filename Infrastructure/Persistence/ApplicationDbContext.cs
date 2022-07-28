@@ -19,12 +19,27 @@ namespace Infrastructure.Persistence
             _tenantService = tenantService;
             TenantId = _tenantService.GetTenant()?.TID;
         }
+        public ApplicationDbContext()
+        {
+
+        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+           : base(options)
+        {
+        }
 
         public DbSet<HistoricalEvent> HistoricalEvents { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<HistoricalEvent>(entity =>
+            {
+                entity.Property(e => e.ID)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
+            });
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.ID)
                     .ValueGeneratedNever()

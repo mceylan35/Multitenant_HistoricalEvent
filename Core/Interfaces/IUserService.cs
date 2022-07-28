@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IHistoricalEventService:IGenericRepository<HistoricalEvent>
+    public interface IUserService : IGenericRepository<User>
     {
-        Task<HistoricalEvent> CreateAsync(string dcZaman, string dckategori, string dcOlay);
- 
+        User Login(string username, string password);
     }
 }
