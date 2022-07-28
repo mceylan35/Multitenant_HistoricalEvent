@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,9 @@ using Multitenant.Api.Filter;
 using Multitenant.Api.Helper;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Multitenant.Api
 {
@@ -56,6 +59,18 @@ namespace Multitenant.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenant.Api", Version = "v1" });
                 c.OperationFilter<MyHeaderFilter>();
+            });
+            services.Configure<RequestLocalizationOptions>(options =>
+            { 
+
+                options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+                {
+                    //...
+                    var userLangs = context.Request.Headers["Accept-Language"].ToString();
+                    var firstLang = userLangs.Split(',').FirstOrDefault();
+                    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
+                    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
+                }));
             });
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<IHistoricalEventService, HistoricalEventService>();
