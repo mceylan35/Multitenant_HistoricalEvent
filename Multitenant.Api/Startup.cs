@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Multitenant.Api.Filter;
+using Multitenant.Api.Helper;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -90,7 +91,7 @@ namespace Multitenant.Api
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
