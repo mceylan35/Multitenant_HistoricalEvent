@@ -1,5 +1,6 @@
 using Core.Interfaces;
 using Core.Options;
+using Infrastructure.Caching;
 using Infrastructure.Extensions;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
@@ -58,6 +59,8 @@ namespace Multitenant.Api
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<IHistoricalEventService, HistoricalEventService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddMemoryCache();
             services.Configure<TenantSettings>(config.GetSection(nameof(TenantSettings)));
           //  services.AddDbContext<ApplicationDbContext>();
             services.AddAndMigrateTenantDatabases(config);

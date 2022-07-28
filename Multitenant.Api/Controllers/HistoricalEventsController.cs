@@ -1,4 +1,6 @@
-﻿using Core.Interfaces;
+﻿using Core.Entities;
+using Core.Interfaces;
+using Infrastructure.Caching;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,20 +15,31 @@ namespace Multitenant.Api.Controllers
     public class HistoricalEventsController : ControllerBase
     {
         private readonly IHistoricalEventService _service;
+        private readonly ICacheService _cacheService;
 
-        public HistoricalEventsController(IHistoricalEventService service)
+        public HistoricalEventsController(IHistoricalEventService service,  ICacheService cacheService)
         {
             _service = service;
-        }
+            _cacheService=cacheService;
+    }
         [HttpGet]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var productDetails = await _service.GetByIdAsync(id);
-            return Ok(productDetails);
+            var cacheData = _cacheService.GetData<IEnumerable<HistoricalEventRequest>>("history");
+            if (cacheData != null)
+            {
+                return Ok(cacheData);
+            }
+            var gethistory = await _service.GetByIdAsync(id);
+            var expirationTime = DateTimeOffset.Now.AddMinutes(20.0);
+            _cacheService.SetData<HistoricalEvent>("history", gethistory, expirationTime);
+            return Ok(gethistory);
         }
         [HttpPost]
         public async Task<IActionResult> CreateAsync(HistoricalEventRequest request)
         {
+            _cacheService.RemoveData("history");
+            
             return Ok(await _service.CreateAsync(request.DcOlay, request.DcKategori, request.DcKategori));
         }
     }
