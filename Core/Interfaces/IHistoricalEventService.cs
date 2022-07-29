@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IHistoricalEventService:IGenericRepository<HistoricalEvent>
+    public interface IHistoricalEventService:IGenericRepository<HistoricalEvents>
     {
-        Task<HistoricalEvent> CreateAsync(string dcZaman, string dckategori, string dcOlay);
+        Task<HistoricalEvents> Create(HistoricalEvents historicalEvent);
  
     }
 }

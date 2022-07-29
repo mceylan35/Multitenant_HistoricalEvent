@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Core.Interfaces
 {
-    public interface IUserService : IGenericRepository<User>
+    public interface IUserService : IGenericRepository<Users>
     {
-        User Login(string username, string password);
+        Users Login(string username, string password);
     }
 }

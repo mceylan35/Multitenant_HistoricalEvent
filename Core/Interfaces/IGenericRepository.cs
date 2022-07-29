@@ -16,7 +16,7 @@ namespace Core.Interfaces
         Task<T> GetByIdAsync(int id);
 
         Task<IList<T>> GetAllAsync();
-        Task<T> CreateAsync(T obj);
+        Task<T> Create(T obj);
           
     }
 }
