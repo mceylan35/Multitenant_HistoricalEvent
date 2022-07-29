@@ -41,15 +41,15 @@ namespace Multitenant.Api.Controllers
 
             return NotFound("User not found");
         }
-        private string GenerateToken(User  user)
+        private string GenerateToken(Users  user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Mail),
                 new Claim(ClaimTypes.Name, user.Name)
             };
 
