@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    public class UserService : GenericRepository<User>, IUserService
+    public class UserService : GenericRepository<Users>, IUserService
     {
         private readonly ApplicationDbContext _context;
         public UserService(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
-        public User Login(string mail, string password)
+        public Users Login(string mail, string password)
         {
-            var user = _context.Users.FirstOrDefault(i=>i.Email== mail && i.Password==password);
+            var user = _context.Users.FirstOrDefault(i=>i.Mail== mail && i.Password==password);
             if (user == null)
             {
                 return null;

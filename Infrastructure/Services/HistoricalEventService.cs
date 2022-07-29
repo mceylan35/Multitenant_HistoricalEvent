@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    public class HistoricalEventService : GenericRepository<HistoricalEvent>, IHistoricalEventService
+    public class HistoricalEventService : GenericRepository<HistoricalEvents>, IHistoricalEventService
     {
         public HistoricalEventService(ApplicationDbContext context) : base(context)
         {
@@ -19,30 +19,29 @@ namespace Infrastructure.Services
 
        
 
-        public async Task<HistoricalEvent> CreateAsync(string dcZaman, string dcKategori, string dcOlay)
-        {
-            var historicalEvent = new HistoricalEvent(dcZaman, dcKategori, dcOlay);
+        public async Task<HistoricalEvents> Create(HistoricalEvents historicalEvent)
+        { 
             _context.HistoricalEvents.Add(historicalEvent);
             await _context.SaveChangesAsync();
             return historicalEvent;
         }
 
-        public Task<HistoricalEvent> CreateAsync(HistoricalEvent obj)
+        public HistoricalEvents CreateAsync(HistoricalEvents obj)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IReadOnlyList<HistoricalEvent>> GetAllAsync()
+        public async Task<IReadOnlyList<HistoricalEvents>> GetAllAsync()
         {
             return await _context.HistoricalEvents.ToListAsync();
         }
 
-        public async Task<HistoricalEvent> GetByIdAsync(int id)
+        public async Task<HistoricalEvents> GetByIdAsync(int id)
         {
             return await _context.HistoricalEvents.FindAsync(id);
         }
 
-        Task<IList<HistoricalEvent>> IGenericRepository<HistoricalEvent>.GetAllAsync()
+        Task<IList<HistoricalEvents>> IGenericRepository<HistoricalEvents>.GetAllAsync()
         {
             throw new NotImplementedException();
         }

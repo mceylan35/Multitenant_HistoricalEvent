@@ -27,7 +27,7 @@ namespace Infrastructure.Services
             _dbEntities.Add(entity);
         }
 
-        public Task<TEntity> CreateAsync(TEntity obj)
+        public Task<TEntity> Create(TEntity obj)
         {
             throw new NotImplementedException();
         }

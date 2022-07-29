@@ -13,42 +13,37 @@ namespace Infrastructure.Persistence
     {
         public string TenantId { get; set; }
         private readonly ITenantService _tenantService;
-
+    
         public ApplicationDbContext(DbContextOptions options, ITenantService tenantService) : base(options)
         {
             _tenantService = tenantService;
             TenantId = _tenantService.GetTenant()?.TID;
         }
-        public ApplicationDbContext()
-        {
-
-        }
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-           : base(options)
-        {
-        }
-
-        public DbSet<HistoricalEvent> HistoricalEvents { get; set; }
-        public DbSet<User> Users { get; set; }
+   
+         
+       
+        public virtual DbSet<HistoricalEvents> HistoricalEvents { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<HistoricalEvent>(entity =>
+            modelBuilder.Entity<HistoricalEvents>(entity =>
             {
-                entity.Property(e => e.ID)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
-            });
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.Property(e => e.ID)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ID");
-            });
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<HistoricalEvent>().HasQueryFilter(a => a.TenantId == TenantId);
-        }
+                entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.HistoricalEvents)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_HistoricalEvents_Users");
+            });
+
+            
+            base.OnModelCreating(modelBuilder);
+         
+            modelBuilder.Entity<HistoricalEvents>().HasQueryFilter(a => a.TenantId == TenantId);
+            modelBuilder.Entity<Users>().HasQueryFilter(a => a.TenantId == TenantId);
+        }
+         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var tenantConnectionString = _tenantService.GetConnectionString();
