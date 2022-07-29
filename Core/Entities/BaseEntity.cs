@@ -1,7 +1,7 @@
 ﻿namespace Core.Entities
 {
-    public abstract class BaseEntity
+    public class BaseEntity
     {
-        public long ID { get;  set; }
+     //   public int Id { get;  set; }
     }
 }
