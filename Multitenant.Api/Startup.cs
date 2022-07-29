@@ -40,42 +40,44 @@ namespace Multitenant.Api
         {
             services.AddHttpContextAccessor();
             services.AddControllers();
-            services.AddLocalization();
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Added for JWT token - Shashank
-            //   .AddJwtBearer(options =>
-            //   {
-            //       options.TokenValidationParameters = new TokenValidationParameters
-            //       {
-            //           ValidateIssuer = true,
-            //           ValidateAudience = true,
-            //           ValidateLifetime = true,
-            //           ValidateIssuerSigningKey = true,
-            //           //ValidIssuer = Configuration["Jwt:Issuer"],
-            //          // ValidAudience = Configuration["Jwt:Audience"],
-            //           ///IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-            //       };
-            //   });
+      services.AddLocalization();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) //Added for JWT token - Shashank
+           .AddJwtBearer(options =>
+           {
+               options.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuer = true,
+                   ValidateAudience = true,
+                   ValidateLifetime = true,
+                   ValidateIssuerSigningKey = true,
+                   //ValidIssuer = Configuration["Jwt:Issuer"],
+                  // ValidAudience = Configuration["Jwt:Audience"],
+                   ///IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+               };
+           });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenant.Api", Version = "v1" });
                 c.OperationFilter<MyHeaderFilter>();
             });
-            services.Configure<RequestLocalizationOptions>(options =>
-            { 
-
-                options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
-                {
-                    //...
-                    var userLangs = context.Request.Headers["Accept-Language"].ToString();
-                    var firstLang = userLangs.Split(',').FirstOrDefault();
-                    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
-                    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
-                }));
-            });
-            services.AddTransient<ITenantService, TenantService>();
+      services.Configure<RequestLocalizationOptions>(options =>
+      { 
+      
+          options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+          {
+           
+              var userLangs = context.Request.Headers["Accept-Language"].ToString();
+              var firstLang = userLangs.Split(',').FirstOrDefault();
+              var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
+              return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
+          }));
+      });
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<IHistoricalEventService, HistoricalEventService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddScoped<ICacheService, CacheService>();
+            services.AddTransient<ITenantService, TenantService>();
+            //services.AddScoped<IGenericRepository<>, GenericRepository<>>();
+            services.AddTransient<ICacheService, CacheService>();
             services.AddMemoryCache();
             services.Configure<TenantSettings>(config.GetSection(nameof(TenantSettings)));
           //  services.AddDbContext<ApplicationDbContext>();

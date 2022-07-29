@@ -32,15 +32,15 @@ namespace Multitenant.Api.Controllers
             }
             var gethistory = await _service.GetByIdAsync(id);
             var expirationTime = DateTimeOffset.Now.AddMinutes(20.0);
-            _cacheService.SetData<HistoricalEvent>("history", gethistory, expirationTime);
+            _cacheService.SetData<HistoricalEvents>("history", gethistory, expirationTime);
             return Ok(gethistory);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(HistoricalEventRequest request)
+        public async Task<IActionResult> CreateAsync(HistoricalEvents request)
         {
             _cacheService.RemoveData("history");
-            
-            return Ok(await _service.CreateAsync(request.DcOlay, request.DcKategori, request.DcKategori));
+            await _service.Create(request);
+            return Ok( true);
         }
     }
     public class HistoricalEventRequest
