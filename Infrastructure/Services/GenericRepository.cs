@@ -26,6 +26,10 @@ namespace Infrastructure.Services
         {
             _dbEntities.Add(entity);
         }
+        public async Task AddRange(IList<TEntity> entity)
+        {
+           await _dbEntities.AddRangeAsync(entity);
+        }
 
         public Task<TEntity> Create(TEntity obj)
         {

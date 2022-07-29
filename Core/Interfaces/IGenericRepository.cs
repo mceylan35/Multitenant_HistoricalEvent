@@ -14,6 +14,7 @@ namespace Core.Interfaces
         Task<T> FindAsync(Guid id);
         Task SaveChangesAsync();
         Task<T> GetByIdAsync(int id);
+        Task AddRange(IList<T> entity); 
 
         Task<IList<T>> GetAllAsync();
         Task<T> Create(T obj);
