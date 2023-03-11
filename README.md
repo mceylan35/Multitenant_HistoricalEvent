@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/mceylan35/Multitenant_HistoricalEvent/badge.svg?branch=master)](https://coveralls.io/github/mceylan35/Multitenant_HistoricalEvent?branch=master)
+
+
 # Multi-tenancy alt yapılı ASP.NET Core Projesi
 DDD Mimari yapısı kullanıldı.
 API Katmanı
